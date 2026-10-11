@@ -1,0 +1,14 @@
+ZF SMARTSHOP V4 – ONLINE PWA
+
+This is a deployable project, NOT a live public website yet.
+
+1. Create a private GitHub repository and upload the CONTENTS of this folder (package.json and server.js at root). Do not put API keys in GitHub.
+2. Sign up for Render.com and choose New > Web Service > connect your GitHub repository.
+3. Set Runtime to Node, Build Command: npm install, Start Command: npm start. Choose an appropriate plan.
+4. In Render environment settings add SERPER_API_KEY with your own key from serper.dev. Never share this key publicly.
+5. Deploy. Render will provide an HTTPS URL. Open it on Android in Chrome and select Add to Home screen / Install app.
+6. Test prices and matching pack sizes carefully before sharing with customers.
+
+IMPORTANT: Prices are extracted from search result snippets; they may be stale, mismatched, or missing. Availability, delivery fees and final checkout totals are NOT confirmed. Search may take a long time for 15 items. An internet connection is needed to search; offline mode only opens the app shell.
+
+SECURITY: This is a prototype. Before public launch, add authentication or rate limiting, caching, request budgets and logging to avoid unauthorized API usage and unexpected costs. Hosting and API service may charge fees.
