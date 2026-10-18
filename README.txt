@@ -1,12 +1,21 @@
-ZF SMARTSHOP V7 — BLACK EDITION
+ZF SMARTSHOP V7 — BLACK EDITION (RENDER STARTUP FIX)
 
-Includes: public/index.html, server.js, package.json.
+Upload the CONTENTS of this ZIP to the ROOT of your GitHub repository:
+  package.json
+  server.js
+  public/index.html
+Do not place these files inside an extra ZF-SmartShop-V7 folder.
 
-To run locally: node server.js, then open http://localhost:3000
-Render Web Service: Build command: npm install ; Start command: npm start
+Render settings:
+  Service type: Web Service (Node)
+  Root Directory: leave blank (if files are in repo root)
+  Build Command: npm install
+  Start Command: npm start
+  Environment: Node
 
-For an existing deployment, replace its public/index.html with the new one (if your existing server already serves public/index.html). Keep your existing server configuration in that case.
+After committing changes: Render > Manual Deploy > Deploy latest commit.
+Check Render Logs for 'ZF SmartShop V7 listening on ...'.
 
-Features: 15-item list, four stores, manual price entry, basket totals, savings, browser localStorage persistence, store links, responsive ZF black/red/orange design.
+If you see 'Not found' after this, confirm you are visiting the URL of the SAME Render service that is connected to this GitHub repository, and verify the deployment commit and Render Root Directory.
 
-NOTE: Demo UI, not live supermarket pricing. Official image logo is not embedded because its source asset was not provided in this session. Existing backend price integrations are not included in this standalone bundle.
+Manual sample prices only; no live price API integration. Official image logo not included.
