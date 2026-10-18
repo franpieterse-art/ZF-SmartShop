@@ -1,1 +1,1 @@
-{"name":"zf-smartshop-v7","version":"7.0.0","private":true,"scripts":{"start":"node server.js"},"engines":{"node":">=18"}}
+{"name":"zf-smartshop-v9","version":"9.0.0","private":true,"scripts":{"start":"node server.js"},"engines":{"node":">=18"}}
