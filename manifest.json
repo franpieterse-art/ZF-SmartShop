@@ -1,1 +1,1 @@
-{"name":"ZF SmartShop","short_name":"ZF Shopping","start_url":"/","display":"standalone","background_color":"#090d10","theme_color":"#ef4b16"}
+{"name":"ZF SmartShop V6","short_name":"ZF Shopping","description":"Compare grocery baskets at SPAR, Pick n Pay, Checkers and Woolworths","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#161616","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
