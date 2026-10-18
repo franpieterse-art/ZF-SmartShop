@@ -1,21 +1,8 @@
-ZF SMARTSHOP V7 — BLACK EDITION (RENDER STARTUP FIX)
+ZF SMARTSHOP V8 — PRICE SEARCH RESTORED
 
-Upload the CONTENTS of this ZIP to the ROOT of your GitHub repository:
-  package.json
-  server.js
-  public/index.html
-Do not place these files inside an extra ZF-SmartShop-V7 folder.
-
-Render settings:
-  Service type: Web Service (Node)
-  Root Directory: leave blank (if files are in repo root)
-  Build Command: npm install
-  Start Command: npm start
-  Environment: Node
-
-After committing changes: Render > Manual Deploy > Deploy latest commit.
-Check Render Logs for 'ZF SmartShop V7 listening on ...'.
-
-If you see 'Not found' after this, confirm you are visiting the URL of the SAME Render service that is connected to this GitHub repository, and verify the deployment commit and Render Root Directory.
-
-Manual sample prices only; no live price API integration. Official image logo not included.
+Upload package.json, server.js and the public folder to the root of your GitHub repository.
+Render Web Service: Build Command npm install; Start Command npm start.
+Render Environment: Add SERPER_API_KEY with your own Serper API key (google.serper.dev).
+Without the key, the Search Prices button still offers direct Google searches limited to each retailer.
+With the key, the server searches indexed retailer pages and extracts indicative prices; it does not guarantee current prices or correct matching sizes. Check before using.
+Manual prices and local browser storage are preserved.

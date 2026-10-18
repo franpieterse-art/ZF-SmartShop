@@ -1,24 +1,12 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const root = path.join(__dirname, 'public');
-const port = Number(process.env.PORT) || 3000;
-const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon'};
-http.createServer((req,res)=>{
-  let pathname;
-  try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); } catch {res.writeHead(400);return res.end('Bad request');}
-  let target = path.resolve(root, '.' + pathname);
-  if (!target.startsWith(root + path.sep) && target !== root) {res.writeHead(403);return res.end('Forbidden');}
-  if (pathname === '/' || pathname === '/index.html') target = path.join(root,'index.html');
-  fs.stat(target,(err,stat)=>{
-    if(err || !stat.isFile()) {
-      // Single-page application fallback for direct page loads.
-      target=path.join(root,'index.html');
-    }
-    fs.readFile(target,(readErr,data)=>{
-      if(readErr){res.writeHead(500);return res.end('App homepage missing');}
-      res.writeHead(200,{'Content-Type':mime[path.extname(target).toLowerCase()]||'application/octet-stream','Cache-Control':'no-cache'});
-      res.end(data);
-    });
-  });
-}).listen(port,'0.0.0.0',()=>console.log(`ZF SmartShop V7 listening on ${port}`));
+const http=require('http'),fs=require('fs'),path=require('path'),https=require('https');
+const root=path.join(__dirname,'public'),port=Number(process.env.PORT)||3000;
+const domains=['checkers.co.za','pnp.co.za','spar.co.za','woolworths.co.za'];
+function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data))}
+function serper(query){return new Promise((resolve,reject)=>{const body=JSON.stringify({q:query,gl:'za',hl:'en',num:5});const req=https.request('https://google.serper.dev/search',{method:'POST',headers:{'X-API-KEY':process.env.SERPER_API_KEY,'Content-Type':'application/json','Content-Length':Buffer.byteLength(body)},timeout:12000},resp=>{let raw='';resp.on('data',c=>{raw+=c;if(raw.length>250000)resp.destroy()});resp.on('end',()=>{try{if(resp.statusCode!==200)throw Error('Search provider returned '+resp.statusCode);resolve(JSON.parse(raw))}catch(e){reject(e)}})});req.on('error',reject);req.on('timeout',()=>req.destroy(Error('Search timed out')));req.end(body)})}
+http.createServer(async(req,res)=>{let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname)}catch{return json(res,400,{error:'Invalid request'})}
+if(pathname==='/api/search-prices'){
+if(req.method!=='POST')return json(res,405,{error:'Use POST'});
+if(!process.env.SERPER_API_KEY)return json(res,503,{error:'Online search needs SERPER_API_KEY in Render environment settings. Retailer search links are provided below.'});
+let raw='';req.on('data',c=>{raw+=c;if(raw.length>10000)req.destroy()});req.on('end',async()=>{try{const payload=JSON.parse(raw);if(!Array.isArray(payload.items)||payload.items.length>15||!payload.items.length||payload.items.some(x=>typeof x!=='string'||x.length>120))return json(res,400,{error:'Provide 1–15 valid products'});
+const result=[];for(const name of payload.items){const results=[];for(let j=0;j<4;j++){try{const data=await serper('site:'+domains[j]+' '+name+' price R South Africa');for(const hit of (data.organic||[]).slice(0,3)){let url;try{url=new URL(hit.link)}catch{continue}if(!url.hostname.endsWith(domains[j]))continue;const snippet=String(hit.snippet||'').slice(0,300);const title=String(hit.title||'').slice(0,150);const matches=(title+' '+snippet).match(/(?:R\s*|ZAR\s*)([0-9]{1,5}(?:[,.][0-9]{2})?)/i);let price=matches?Number(matches[1].replace(',','.')):null;if(!Number.isFinite(price)||price<0)price=null;results.push({store:['Checkers','Pick n Pay','SPAR','Woolworths'][j],storeIndex:j,title,link:url.href,snippet,price})}}catch(e){/* Continue with other stores */}}result.push({name,results})}return json(res,200,{items:result})}catch(e){return json(res,400,{error:'Could not process search request'})}});return}
+if(req.method!=='GET')return json(res,405,{error:'Method not allowed'});let target=path.resolve(root,'.'+pathname);if(!target.startsWith(root+path.sep)&&target!==root)return json(res,403,{error:'Forbidden'});if(pathname==='/'||pathname==='/index.html')target=path.join(root,'index.html');fs.stat(target,(err,stat)=>{if(err||!stat.isFile())target=path.join(root,'index.html');fs.readFile(target,(e,data)=>{if(e)return json(res,500,{error:'Homepage missing'});res.writeHead(200,{'Content-Type':target.endsWith('.html')?'text/html; charset=utf-8':'application/octet-stream','Cache-Control':'no-cache'});res.end(data)})})}).listen(port,'0.0.0.0',()=>console.log('ZF SmartShop V8 listening on '+port));
